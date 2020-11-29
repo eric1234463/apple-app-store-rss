@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import useSWR from 'swr'
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux'
 import styled from '../../utils/styled';
 import { IApp } from '../../interfaces/api/app';
 import AppSuggestionCard from '../../components/AppSuggestionCard';
 import AppInfoCard from '../../components/AppInfoCard';
 import SearchBar from '../../components/SearchBar';
+import { State } from '../../interfaces/state';
+import { useDispatch } from '../../application/store/effects';
 
 const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.WHITE};
@@ -33,35 +35,45 @@ const AppWrapper = styled.div`
 `;
 
 const SwrAppPage = () => {
-  const [suggestionPageIndicator, setSuggestionPageIndicator] = useState(1);
-  const [appPageIndicator, setAppPageIndicator] = useState(1);
-
-  const { data: apps, mutate: mutateApps } = useSWR<IApp[]>(`api/apps?page=${appPageIndicator}`);
-  const { data: suggestionApps, mutate: mutateSuggestionApps } = useSWR<IApp[]>(`api/suggestion_apps?page=${suggestionPageIndicator}`);
+  const dispatch = useDispatch()
+  const { items: apps, page: appPage } = useSelector<State, State['app']>(state => state.app)
+  const { items: suggestionApps, page: suggestionAppPage } = useSelector<State, State['suggestionApp']>(state => state.suggestionApp)
 
   const handleSuggestionAppOnScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
     if (event.currentTarget.scrollWidth - event.currentTarget.scrollLeft === event.currentTarget.clientWidth) {
-      setSuggestionPageIndicator(suggestionPageIndicator + 1)
+      getSuggestionApp(suggestionAppPage + 1);
     }
   }
 
   const handleAppOnScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
     if (event.currentTarget.scrollHeight - event.currentTarget.scrollTop === event.currentTarget.clientHeight) {
-      setAppPageIndicator(appPageIndicator + 1)
+      getApp(appPage + 1);
     }
   }
 
-  useEffect(() => {
-    if (suggestionApps) {
-      mutateSuggestionApps(suggestionApps);
-    }
-  }, [mutateSuggestionApps, suggestionApps])
+  const getApp = (page: number) => {
+    dispatch({
+      type: 'GET_APPS_REQUEST',
+      payload: {
+        page,
+      }
+    })
+  }
+
+  const getSuggestionApp = (page: number) => {
+    dispatch({
+      type: 'GET_SUGGESTION_APPS_REQUEST',
+      payload: {
+        page,
+      }
+    })
+  }
 
   useEffect(() => {
-    if (apps) {
-      mutateApps(apps);
-    }
-  }, [mutateApps, apps])
+    getSuggestionApp(1)
+    getApp(1);
+  }, []) // eslint-disable-next-line react-hooks/exhaustive-deps
+
 
   const handleOnSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     // const text = event.target.value;
@@ -73,9 +85,9 @@ const SwrAppPage = () => {
     <Wrapper>
       <SearchBar placeholder="&#xF002; Search" onChange={handleOnSearch} />
       <SuggestAppWrapper onScroll={handleSuggestionAppOnScroll}>
-        {suggestionApps?.map((element) => (
+        {suggestionApps?.map((element, index) => (
           <AppSuggestionCard
-            key={element.name}
+            key={`${element.name}-${index}`}
             name={element.name}
             avatarUrl={element.artworkUrl100}
             genres={element.genres.map<string>((genres) => genres.name)}
@@ -85,7 +97,7 @@ const SwrAppPage = () => {
       <AppWrapper onScroll={handleAppOnScroll}>
         {apps?.map((element, index) => (
           <AppInfoCard
-            key={element.name}
+            key={`${element.name}-${index}`}
             name={element.name}
             avatarUrl={element.artworkUrl100}
             genres={element.genres.map<string>((genres) => genres.name)}

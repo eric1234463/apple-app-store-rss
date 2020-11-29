@@ -1,11 +1,14 @@
 import React from 'react';
 import { ThemeProvider, createGlobalStyle } from 'styled-components';
+import { Provider as StoreProvider } from 'react-redux';
 import {
   BrowserRouter as Router,
   Route,
 } from "react-router-dom";
 import styled, { theme } from './utils/styled';
-import SwrAppPage from './pages/SwrAppPage';
+import AppPage from './pages/AppPage';
+import createApi from './utils/createApi';
+import configureStore from './application/store/configureStore';
 
 
 const GlobalStyle = createGlobalStyle`
@@ -25,15 +28,24 @@ const Wrapper = styled.div`
 `;
 
 function App() {
+  const api = createApi();
+  const store = configureStore({
+    context: {
+      api,
+    },
+  });
+
   return (
-    <ThemeProvider theme={theme}>
-      <Router>
-        <Wrapper>
-          <Route path="/" component={SwrAppPage} />
-        </Wrapper>
-      </Router>
-      <GlobalStyle />
-    </ThemeProvider>
+    <StoreProvider store={store}>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Wrapper>
+            <Route path="/" component={AppPage} />
+          </Wrapper>
+        </Router>
+        <GlobalStyle />
+      </ThemeProvider>
+    </StoreProvider>
   );
 }
 
