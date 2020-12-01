@@ -9,5 +9,6 @@ export interface IApp {
   rank: number;
   name: string;
   genres: IGenre[];
+  artistName: string;
   artworkUrl100: string;
 }

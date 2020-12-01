@@ -30,6 +30,7 @@ const suggestionApp: Reducer<State["suggestionApp"], ActionTypes> = (
         ...state,
         items: action.payload.data,
         page: action.payload.page,
+        isLoading: false,
       }
     default:
       return { ...state };

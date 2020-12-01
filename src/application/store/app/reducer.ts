@@ -30,6 +30,7 @@ const app: Reducer<State["app"], ActionTypes> = (
         ...state,
         items: action.payload.data,
         page: action.payload.page,
+        isLoading: false,
       };
     default:
       return { ...state };
