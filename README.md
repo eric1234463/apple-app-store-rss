@@ -13,6 +13,10 @@ In the project directory, you can run:
 ### `yarn start` for client
 ### `yarn start:server` for server
 
+## Test Script
+### `yarn test` for run test script
+
+
 ### Tech Stack
 - Redux
 - React
@@ -28,3 +32,5 @@ In the project directory, you can run:
 ### Addition Feature List
 - No Search Result Page
 - Test for Saga
+- Test For Dom & UI
+

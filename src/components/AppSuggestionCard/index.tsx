@@ -46,9 +46,9 @@ const Avatar = styled.img`
 const AppSuggestionCard: FC<IProps> = ({ name, genres, avatarUrl }) => {
   return (
     <Wrapper>
-      <Avatar src={avatarUrl}></Avatar>
-      <div>{name}</div>
-      <span>{genres.join('和')}</span>
+      <Avatar src={avatarUrl} data-testid="avatar"></Avatar>
+      <div data-testid="name">{name}</div>
+      <span data-testid="category">{genres.join('和')}</span>
     </Wrapper>
   )
 }

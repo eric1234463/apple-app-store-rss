@@ -32,8 +32,8 @@ const EmptySearchPage: FC<IProps> = (props) => {
     <Wrapper {...props}>
       <div>
         <EmptySearchIcon color={theme.colors.GREY_200} />
-        <strong>No Match Search Results</strong>
-        <div>Try again other keywords</div>
+        <strong data-testid="header">No Match Search Results</strong>
+        <div data-testid="description">Try again other keywords</div>
       </div>
     </Wrapper>
   )
